@@ -14,7 +14,14 @@ type Graphapite struct {
 
 type FindResponse []FindNode
 
+// FindNode provides this god awful datatype
+// https://github.com/graphite-project/graphite-web/blob/master/webapp/graphite/metrics/views.py
 type FindNode struct {
+	AllowChildren bool   `json:"allowChildren"`
+	Expandable    bool   `json:"expandable"`
+	Id            string `json:"id"`
+	Leaf          bool   `json:"leaf"`
+	Text          string `json:"text"`
 }
 
 func NewGraphapite(store Store) *Graphapite {
@@ -27,13 +34,20 @@ func NewGraphapite(store Store) *Graphapite {
 }
 
 func (g Graphapite) FindHandler(w http.ResponseWriter, r *http.Request) {
-	fr := FindResponse{}
+	fr := FindResponse{
+		FindNode{
+			Id:            "stats.gauges.echo_server",
+			Expandable:    true,
+			Text:          "echo_server",
+			Leaf:          true,
+			AllowChildren: true,
+		},
+	}
 	b, err := json.Marshal(fr)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Write(b)
 }
 
@@ -42,5 +56,6 @@ func (g Graphapite) NotFoundHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (g Graphapite) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	g.Handler.ServeHTTP(w, r)
 }
