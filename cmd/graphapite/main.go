@@ -15,7 +15,13 @@ func (s MockStore) Get(key graphapite.Key, start, end time.Time) ([]graphapite.D
 }
 
 func (s MockStore) Nodes(pattern graphapite.Pattern) ([]graphapite.Node, error) {
-	return []graphapite.Node{}, nil
+	return []graphapite.Node{
+		graphapite.Node{
+			Path: []string{"some", "node", "path"},
+			Name: "nodename",
+			Leaf: true,
+		},
+	}, nil
 }
 
 func (s MockStore) Write(key graphapite.Key, datapoint graphapite.Datapoint) error {

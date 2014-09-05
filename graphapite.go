@@ -12,18 +12,6 @@ type Graphapite struct {
 	Store   Store
 }
 
-type FindResponse []FindNode
-
-// FindNode provides this god awful datatype
-// https://github.com/graphite-project/graphite-web/blob/master/webapp/graphite/metrics/views.py
-type FindNode struct {
-	AllowChildren bool   `json:"allowChildren"`
-	Expandable    bool   `json:"expandable"`
-	Id            string `json:"id"`
-	Leaf          bool   `json:"leaf"`
-	Text          string `json:"text"`
-}
-
 func NewGraphapite(store Store) *Graphapite {
 	g := &Graphapite{Store: store}
 	r := mux.NewRouter()
@@ -34,16 +22,12 @@ func NewGraphapite(store Store) *Graphapite {
 }
 
 func (g Graphapite) FindHandler(w http.ResponseWriter, r *http.Request) {
-	fr := FindResponse{
-		FindNode{
-			Id:            "stats.gauges.echo_server",
-			Expandable:    true,
-			Text:          "echo_server",
-			Leaf:          true,
-			AllowChildren: true,
-		},
+	nodes, err := g.Store.Nodes("")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-	b, err := json.Marshal(fr)
+	b, err := json.Marshal(nodes)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
