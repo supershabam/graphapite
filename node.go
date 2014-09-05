@@ -5,6 +5,3 @@ type Node struct {
 	Name string
 	Leaf bool
 }
-
-func (n Node) Key() Key {
-}
