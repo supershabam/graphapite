@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -15,6 +16,7 @@ func (s MockStore) Get(key graphapite.Key, start, end time.Time) ([]graphapite.D
 }
 
 func (s MockStore) Nodes(pattern graphapite.Pattern) ([]graphapite.Node, error) {
+	fmt.Printf("matching: %s\n", pattern)
 	return []graphapite.Node{
 		graphapite.Node{
 			Path: []string{"some", "node", "path"},

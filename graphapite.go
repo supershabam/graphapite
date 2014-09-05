@@ -22,7 +22,12 @@ func NewGraphapite(store Store) *Graphapite {
 }
 
 func (g Graphapite) FindHandler(w http.ResponseWriter, r *http.Request) {
-	nodes, err := g.Store.Nodes("")
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	nodes, err := g.Store.Nodes(Pattern(r.Form.Get("query")))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
