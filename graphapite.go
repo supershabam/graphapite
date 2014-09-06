@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/supershabam/graphapite/structs"
 )
 
 type Graphapite struct {
@@ -16,6 +17,7 @@ func NewGraphapite(store Store) *Graphapite {
 	g := &Graphapite{Store: store}
 	r := mux.NewRouter()
 	r.HandleFunc("/metrics/find/", g.FindHandler).Methods("GET")
+	r.HandleFunc("/render", g.RenderHandler).Methods("POST").Queries("format", "json")
 	r.HandleFunc("/", g.NotFoundHandler)
 	g.Handler = r
 	return g
@@ -27,7 +29,7 @@ func (g Graphapite) FindHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	nodes, err := g.Store.Nodes(Pattern(r.Form.Get("query")))
+	nodes, err := g.Store.Nodes(structs.Pattern(r.Form.Get("query")))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -38,6 +40,10 @@ func (g Graphapite) FindHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Write(b)
+}
+
+func (g Graphapite) RenderHandler(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("hi"))
 }
 
 func (g Graphapite) NotFoundHandler(w http.ResponseWriter, r *http.Request) {
