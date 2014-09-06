@@ -3,6 +3,7 @@ package graphapite
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -44,24 +45,29 @@ func (g Graphapite) FindHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (g Graphapite) GetSeries(target string) ([]structs.Series, error) {
-	transformer := AliasTransformer{
-		NewName: "lulz",
+	if strings.HasPrefix(target, "alias(") && strings.HasSuffix(target, ")") {
+		target = strings.TrimPrefix(target, "alias")
+		target = strings.TrimSuffix(target, ")")
+		parts := strings.SplitN(target, ",", 2)
+		series, err := g.GetSeries(parts[0])
+		if err != nil {
+			return series, nil
+		}
+		return AliasTransformer{
+			NewName: parts[1],
+		}.Transform(series)
 	}
-	return transformer.Transform([]structs.Series{
+
+	datapoints, err := g.Store.Get(structs.Key(target), time.Now(), time.Now())
+	if err != nil {
+		return []structs.Series{}, err
+	}
+	return []structs.Series{
 		structs.Series{
-			Name: "omg.test",
-			TimesortedDatapoints: []structs.Datapoint{
-				structs.Datapoint{
-					Time:  time.Now().Add(-time.Minute),
-					Value: 14.4,
-				},
-				structs.Datapoint{
-					Time:  time.Now(),
-					Value: 24.4,
-				},
-			},
+			Name:                 target,
+			TimesortedDatapoints: datapoints,
 		},
-	})
+	}, nil
 }
 
 func (g Graphapite) RenderHandler(w http.ResponseWriter, r *http.Request) {

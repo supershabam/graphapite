@@ -13,7 +13,20 @@ import (
 type MockStore struct{}
 
 func (s MockStore) Get(key structs.Key, start, end time.Time) ([]structs.Datapoint, error) {
-	return []structs.Datapoint{}, nil
+	return []structs.Datapoint{
+		structs.Datapoint{
+			Time:  time.Now().Add(-time.Minute * 2),
+			Value: 1,
+		},
+		structs.Datapoint{
+			Time:  time.Now().Add(-time.Minute * 1),
+			Value: 11,
+		},
+		structs.Datapoint{
+			Time:  time.Now(),
+			Value: 5,
+		},
+	}, nil
 }
 
 func (s MockStore) Nodes(pattern structs.Pattern) ([]structs.Node, error) {
