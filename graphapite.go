@@ -16,6 +16,7 @@ func NewGraphapite(store Store) *Graphapite {
 	g := &Graphapite{Store: store}
 	r := mux.NewRouter()
 	r.HandleFunc("/metrics/find/", g.FindHandler).Methods("GET")
+	r.HandleFunc("/render", g.RenderHandler).Methods("POST").Queries("format", "json")
 	r.HandleFunc("/", g.NotFoundHandler)
 	g.Handler = r
 	return g
@@ -38,6 +39,10 @@ func (g Graphapite) FindHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Write(b)
+}
+
+func (g Graphapite) RenderHandler(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("hi"))
 }
 
 func (g Graphapite) NotFoundHandler(w http.ResponseWriter, r *http.Request) {

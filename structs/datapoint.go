@@ -1,4 +1,4 @@
-package graphapite
+package structs
 
 import "time"
 

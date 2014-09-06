@@ -1,3 +1,3 @@
-package graphapite
+package structs
 
 type Pattern string
