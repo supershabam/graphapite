@@ -6,6 +6,10 @@ type AliasTransformer struct {
 	NewName string
 }
 
+func NewAliasTransformer(args []string) (transformer Transformer) {
+	return nil
+}
+
 func (t AliasTransformer) Transform(in []structs.Series) ([]structs.Series, error) {
 	out := make([]structs.Series, len(in))
 	for _, s := range in {
