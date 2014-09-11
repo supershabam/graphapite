@@ -11,6 +11,6 @@ type StoreResolver struct {
 }
 
 // Resolve turns a target string into a list of series
-func (r StoreResolver) Resolve(target string, from, until time.Time) ([]Series, error) {
+func (r StoreResolver) Resolve(target Target, from, until time.Time) ([]Series, error) {
 	return []Series{}, fmt.Errorf("NOT IMPLEMENTED")
 }

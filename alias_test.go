@@ -7,8 +7,8 @@ import (
 
 func TestAlias(t *testing.T) {
 	r := MockResolver{
-		ResolveFn: func(target string, from, until time.Time) ([]Series, error) {
-			if target != "rawtarget" {
+		ResolveFn: func(target Target, from, until time.Time) ([]Series, error) {
+			if target.Pattern != "rawtarget" {
 				t.Fatalf("expected rawtarget to be \"rawtarget\" not %s", target)
 			}
 			return []Series{

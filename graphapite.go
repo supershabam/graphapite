@@ -60,7 +60,13 @@ func (g Graphapite) RenderHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	seri := []Series{}
-	for _, target := range r.Form["target"] {
+	for _, rawtarget := range r.Form["target"] {
+		var target Target
+		err = target.Parse(rawtarget)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 		// TODO parse from and until variables
 		series, err := g.Resolver.Resolve(target, time.Now(), time.Now())
 		if err != nil {

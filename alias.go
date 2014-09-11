@@ -11,7 +11,12 @@ func Alias(r Resolver, args []string, from, until time.Time) (out []Series, err 
 		err = fmt.Errorf("alias: expected 2 arguments but got %d", len(args))
 		return
 	}
-	in, err := r.Resolve(args[0], from, until)
+	var target Target
+	err = target.Parse(args[0])
+	if err != nil {
+		return
+	}
+	in, err := r.Resolve(target, from, until)
 	if err != nil {
 		return
 	}

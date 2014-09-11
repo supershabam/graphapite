@@ -8,5 +8,5 @@ type SeriesFn func(r Resolver, args []string, from, until time.Time) ([]Series, 
 // A Resolver turns a target string into a SeriesFn which can later be called to
 // get an array of Series.
 type Resolver interface {
-	Resolve(target string, from, until time.Time) ([]Series, error)
+	Resolve(target Target, from, until time.Time) ([]Series, error)
 }
