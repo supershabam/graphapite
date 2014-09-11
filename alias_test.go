@@ -25,7 +25,7 @@ func TestAlias(t *testing.T) {
 		},
 	}
 
-	series, err := Alias(r, []string{"rawtarget", "newname"}, time.Now().Add(-time.Minute), time.Now())
+	series, err := Alias(r, []string{"rawtarget", "\"newname\""}, time.Now().Add(-time.Minute), time.Now())
 	if err != nil {
 		t.Fatal(err)
 	}
