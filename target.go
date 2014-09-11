@@ -11,6 +11,7 @@ type Target struct {
 }
 
 func (t *Target) Parse(target string) error {
+	target = strings.TrimSpace(target)
 	t.IsFunction = false
 	t.IsPattern = false
 	if name, args, ok := targetFunction(target); ok {
