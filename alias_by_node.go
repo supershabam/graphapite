@@ -31,13 +31,12 @@ func AliasByNode(r Resolver, args []string, from, until time.Time) (out []Series
 		return
 	}
 	for _, series := range in {
-		parts := strings.Split(string(series.Key), ".")
+		parts := strings.Split(series.Name, ".")
 		if len(parts) < index {
-			err = fmt.Errorf("key does not have part %d", index)
+			err = fmt.Errorf("name does not have part %d", index)
 			return
 		}
 		out = append(out, Series{
-			Key:        series.Key,
 			Name:       parts[index],
 			Datapoints: series.Datapoints,
 		})

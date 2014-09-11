@@ -5,7 +5,7 @@ import (
 )
 
 type Store interface {
-	Get(key Key, start, end time.Time) ([]Datapoint, error)
-	Nodes(pattern Pattern) ([]Node, error)
-	Write(key Key, datapoint Datapoint) error
+	Get(key string, start, end time.Time) ([]Datapoint, error)
+	Nodes(pattern string) ([]Node, error)
+	Write(key string, datapoint Datapoint) error
 }

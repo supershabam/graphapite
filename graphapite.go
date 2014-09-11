@@ -41,7 +41,7 @@ func (g Graphapite) FindHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	nodes, err := g.Store.Nodes(Pattern(r.Form.Get("query")))
+	nodes, err := g.Store.Nodes(r.Form.Get("query"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

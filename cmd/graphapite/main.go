@@ -11,7 +11,7 @@ import (
 
 type MockStore struct{}
 
-func (s MockStore) Get(key graphapite.Key, start, end time.Time) ([]graphapite.Datapoint, error) {
+func (s MockStore) Get(key string, start, end time.Time) ([]graphapite.Datapoint, error) {
 	return []graphapite.Datapoint{
 		graphapite.Datapoint{
 			Time:  time.Now().Add(-time.Minute * 2),
@@ -28,7 +28,7 @@ func (s MockStore) Get(key graphapite.Key, start, end time.Time) ([]graphapite.D
 	}, nil
 }
 
-func (s MockStore) Nodes(pattern graphapite.Pattern) ([]graphapite.Node, error) {
+func (s MockStore) Nodes(pattern string) ([]graphapite.Node, error) {
 	fmt.Printf("matching: %s\n", pattern)
 	return []graphapite.Node{
 		graphapite.Node{
@@ -39,7 +39,7 @@ func (s MockStore) Nodes(pattern graphapite.Pattern) ([]graphapite.Node, error) 
 	}, nil
 }
 
-func (s MockStore) Write(key graphapite.Key, datapoint graphapite.Datapoint) error {
+func (s MockStore) Write(key string, datapoint graphapite.Datapoint) error {
 	return nil
 }
 

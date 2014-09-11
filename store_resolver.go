@@ -18,13 +18,12 @@ func (r StoreResolver) Resolve(target Target, from, until time.Time) ([]Series, 
 		}
 		return []Series{}, fmt.Errorf("function %s not found", target.Name)
 	}
-	datapoints, err := r.Store.Get(Key(target.Pattern), from, until)
+	datapoints, err := r.Store.Get(target.Pattern, from, until)
 	if err != nil {
 		return []Series{}, err
 	}
 	return []Series{
 		Series{
-			Key:        Key(target.Pattern),
 			Name:       target.Pattern,
 			Datapoints: datapoints,
 		},

@@ -35,7 +35,6 @@ func Alias(r Resolver, args []string, from, until time.Time) (out []Series, err 
 	}
 	for _, series := range in {
 		out = append(out, Series{
-			Key:        series.Key,
 			Name:       name,
 			Datapoints: series.Datapoints,
 		})
