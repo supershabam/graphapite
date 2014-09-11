@@ -23,6 +23,7 @@ func NewGraphapite(store Store) *Graphapite {
 	}
 
 	resolver.Functions["alias"] = Alias
+	resolver.Functions["aliasByNode"] = AliasByNode
 
 	g.Resolver = resolver
 

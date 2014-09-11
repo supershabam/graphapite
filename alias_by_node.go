@@ -2,13 +2,14 @@ package graphapite
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 )
 
 // Args => (Target, "string") string in quotes. Don't ask me, it's what graphite
 // desires.
-func Alias(r Resolver, args []string, from, until time.Time) (out []Series, err error) {
+func AliasByNode(r Resolver, args []string, from, until time.Time) (out []Series, err error) {
 	if len(args) != 2 {
 		err = fmt.Errorf("alias: expected 2 arguments but got %d", len(args))
 		return
@@ -20,23 +21,24 @@ func Alias(r Resolver, args []string, from, until time.Time) (out []Series, err 
 		return
 	}
 
-	name := args[1]
-	name = strings.TrimSpace(name)
-	if !strings.HasPrefix(name, "\"") || !strings.HasSuffix(name, "\"") {
-		err = fmt.Errorf("name must be quoted")
+	index, err := strconv.Atoi(args[1])
+	if err != nil {
 		return
 	}
-	name = strings.TrimPrefix(name, "\"")
-	name = strings.TrimSuffix(name, "\"")
 
 	in, err := r.Resolve(target, from, until)
 	if err != nil {
 		return
 	}
 	for _, series := range in {
+		parts := strings.Split(string(series.Key), ".")
+		if len(parts) < index {
+			err = fmt.Errorf("key does not have part %d", index)
+			return
+		}
 		out = append(out, Series{
 			Key:        series.Key,
-			Name:       name,
+			Name:       parts[index],
 			Datapoints: series.Datapoints,
 		})
 	}

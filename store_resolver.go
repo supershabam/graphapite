@@ -24,6 +24,7 @@ func (r StoreResolver) Resolve(target Target, from, until time.Time) ([]Series, 
 	}
 	return []Series{
 		Series{
+			Key:        Key(target.Pattern),
 			Name:       target.Pattern,
 			Datapoints: datapoints,
 		},
