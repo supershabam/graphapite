@@ -1,9 +1,11 @@
 package graphapite
 
+import "time"
+
 type MockResolver struct {
-	ResolveFn func(string) ([]Series, error)
+	ResolveFn func(target string, from, until time.Time) ([]Series, error)
 }
 
-func (r MockResolver) Resolve(rawtarget string) ([]Series, error) {
-	return r.ResolveFn(rawtarget)
+func (r MockResolver) Resolve(target string, from, until time.Time) ([]Series, error) {
+	return r.ResolveFn(target, from, until)
 }

@@ -11,8 +11,9 @@ import (
 )
 
 type Graphapite struct {
-	Handler http.Handler
-	Store   Store
+	Handler  http.Handler
+	Resolver Resolver
+	Store    Store
 }
 
 func NewGraphapite(store Store) *Graphapite {
