@@ -26,12 +26,16 @@ func (t *Target) Parse(target string) error {
 
 func targetFunction(target string) (name string, args []string, ok bool) {
 	lParen := strings.Index(target, "(")
-	rParen := strings.LastIndex(target, ")")
-	if lParen == -1 || rParen == -1 || lParen == 0 {
+	// lParen must exist and must not be in first position
+	if lParen == -1 || lParen == 0 {
+		return
+	}
+	// must end in a )
+	if !strings.HasSuffix(target, ")") {
 		return
 	}
 	name = target[:lParen]
-	args = targetArgs(target[lParen+1 : rParen])
+	args = targetArgs(target[lParen+1 : len(target)-1])
 	ok = true
 	return
 }
