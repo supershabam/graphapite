@@ -6,28 +6,26 @@ import (
 )
 
 func TestAlias(t *testing.T) {
-	a := Alias{
-		Resolver: MockResolver{
-			ResolveFn: func(target string, from, until time.Time) ([]Series, error) {
-				if target != "rawtarget" {
-					t.Fatalf("expected rawtarget to be \"rawtarget\" not %s", target)
-				}
-				return []Series{
-					Series{
-						Name: "jerks",
-						Datapoints: []Datapoint{
-							Datapoint{
-								Time:  time.Now(),
-								Value: 42.0,
-							},
+	r := MockResolver{
+		ResolveFn: func(target string, from, until time.Time) ([]Series, error) {
+			if target != "rawtarget" {
+				t.Fatalf("expected rawtarget to be \"rawtarget\" not %s", target)
+			}
+			return []Series{
+				Series{
+					Name: "jerks",
+					Datapoints: []Datapoint{
+						Datapoint{
+							Time:  time.Now(),
+							Value: 42.0,
 						},
 					},
-				}, nil
-			},
+				},
+			}, nil
 		},
 	}
 
-	series, err := a.Execute([]string{"rawtarget", "newname"}, time.Now().Add(-time.Minute), time.Now())
+	series, err := Alias(r, []string{"rawtarget", "newname"}, time.Now().Add(-time.Minute), time.Now())
 	if err != nil {
 		t.Fatal(err)
 	}

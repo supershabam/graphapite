@@ -24,7 +24,7 @@ func NewGraphapite(store Store) *Graphapite {
 		Functions: map[string]SeriesFn{},
 	}
 
-	resolver.Functions["alias"] = Alias{resolver}
+	resolver.Functions["alias"] = Alias
 
 	r := mux.NewRouter()
 	r.HandleFunc("/metrics/find/", g.FindHandler).Methods("GET")
