@@ -12,12 +12,20 @@ import (
 
 type Graphapite struct {
 	Handler  http.Handler
-	Resolver Resolver
 	Store    Store
+	Resolver Resolver
 }
 
 func NewGraphapite(store Store) *Graphapite {
 	g := &Graphapite{Store: store}
+
+	resolver := StoreResolver{
+		Store:     store,
+		Functions: map[string]SeriesFn{},
+	}
+
+	resolver.Functions["alias"] = Alias{resolver}
+
 	r := mux.NewRouter()
 	r.HandleFunc("/metrics/find/", g.FindHandler).Methods("GET")
 	r.HandleFunc("/render", g.RenderHandler).Methods("POST")
