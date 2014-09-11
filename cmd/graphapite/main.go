@@ -7,32 +7,31 @@ import (
 	"time"
 
 	"github.com/supershabam/graphapite"
-	"github.com/supershabam/graphapite/structs"
 )
 
 type MockStore struct{}
 
-func (s MockStore) Get(key structs.Key, start, end time.Time) ([]structs.Datapoint, error) {
-	return []structs.Datapoint{
-		structs.Datapoint{
+func (s MockStore) Get(key graphapite.Key, start, end time.Time) ([]graphapite.Datapoint, error) {
+	return []graphapite.Datapoint{
+		graphapite.Datapoint{
 			Time:  time.Now().Add(-time.Minute * 2),
 			Value: 1,
 		},
-		structs.Datapoint{
+		graphapite.Datapoint{
 			Time:  time.Now().Add(-time.Minute * 1),
 			Value: 11,
 		},
-		structs.Datapoint{
+		graphapite.Datapoint{
 			Time:  time.Now(),
 			Value: 5,
 		},
 	}, nil
 }
 
-func (s MockStore) Nodes(pattern structs.Pattern) ([]structs.Node, error) {
+func (s MockStore) Nodes(pattern graphapite.Pattern) ([]graphapite.Node, error) {
 	fmt.Printf("matching: %s\n", pattern)
-	return []structs.Node{
-		structs.Node{
+	return []graphapite.Node{
+		graphapite.Node{
 			Path: []string{"some", "node", "path"},
 			Name: "nodename",
 			Leaf: true,
@@ -40,7 +39,7 @@ func (s MockStore) Nodes(pattern structs.Pattern) ([]structs.Node, error) {
 	}, nil
 }
 
-func (s MockStore) Write(key structs.Key, datapoint structs.Datapoint) error {
+func (s MockStore) Write(key graphapite.Key, datapoint graphapite.Datapoint) error {
 	return nil
 }
 

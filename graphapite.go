@@ -2,9 +2,7 @@ package graphapite
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -25,6 +23,8 @@ func NewGraphapite(store Store) *Graphapite {
 	}
 
 	resolver.Functions["alias"] = Alias
+
+	g.Resolver = resolver
 
 	r := mux.NewRouter()
 	r.HandleFunc("/metrics/find/", g.FindHandler).Methods("GET")
@@ -53,30 +53,6 @@ func (g Graphapite) FindHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(b)
 }
 
-func (g Graphapite) GetSeries(target string) ([]Series, error) {
-	if strings.HasPrefix(target, "alias(") && strings.HasSuffix(target, ")") {
-		target = strings.TrimPrefix(target, "alias")
-		target = strings.TrimSuffix(target, ")")
-		parts := strings.SplitN(target, ",", 2)
-		series, err := g.GetSeries(parts[0])
-		if err != nil {
-			return series, nil
-		}
-		return []Series{}, fmt.Errorf("NOT IMPLEMENTED BITCH")
-	}
-
-	datapoints, err := g.Store.Get(Key(target), time.Now(), time.Now())
-	if err != nil {
-		return []Series{}, err
-	}
-	return []Series{
-		Series{
-			Name:       target,
-			Datapoints: datapoints,
-		},
-	}, nil
-}
-
 func (g Graphapite) RenderHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -85,7 +61,8 @@ func (g Graphapite) RenderHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	seri := []Series{}
 	for _, target := range r.Form["target"] {
-		series, err := g.GetSeries(target)
+		// TODO parse from and until variables
+		series, err := g.Resolver.Resolve(target, time.Now(), time.Now())
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
