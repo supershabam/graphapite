@@ -2,12 +2,12 @@ package graphapite
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/supershabam/graphapite/structs"
 )
 
 type Graphapite struct {
@@ -31,7 +31,7 @@ func (g Graphapite) FindHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	nodes, err := g.Store.Nodes(structs.Pattern(r.Form.Get("query")))
+	nodes, err := g.Store.Nodes(Pattern(r.Form.Get("query")))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -44,7 +44,7 @@ func (g Graphapite) FindHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(b)
 }
 
-func (g Graphapite) GetSeries(target string) ([]structs.Series, error) {
+func (g Graphapite) GetSeries(target string) ([]Series, error) {
 	if strings.HasPrefix(target, "alias(") && strings.HasSuffix(target, ")") {
 		target = strings.TrimPrefix(target, "alias")
 		target = strings.TrimSuffix(target, ")")
@@ -53,19 +53,17 @@ func (g Graphapite) GetSeries(target string) ([]structs.Series, error) {
 		if err != nil {
 			return series, nil
 		}
-		return AliasTransformer{
-			NewName: parts[1],
-		}.Transform(series)
+		return []Series{}, fmt.Errorf("NOT IMPLEMENTED BITCH")
 	}
 
-	datapoints, err := g.Store.Get(structs.Key(target), time.Now(), time.Now())
+	datapoints, err := g.Store.Get(Key(target), time.Now(), time.Now())
 	if err != nil {
-		return []structs.Series{}, err
+		return []Series{}, err
 	}
-	return []structs.Series{
-		structs.Series{
-			Name:                 target,
-			TimesortedDatapoints: datapoints,
+	return []Series{
+		Series{
+			Name:       target,
+			Datapoints: datapoints,
 		},
 	}, nil
 }
@@ -76,7 +74,7 @@ func (g Graphapite) RenderHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	seri := []structs.Series{}
+	seri := []Series{}
 	for _, target := range r.Form["target"] {
 		series, err := g.GetSeries(target)
 		if err != nil {
